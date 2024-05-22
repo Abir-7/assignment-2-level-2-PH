@@ -1,29 +1,36 @@
 import { Schema, model } from 'mongoose';
 import { TProduct } from './products.interface';
+import { ProductZodSchema } from './product.validation';
 
 // Define the Variant schema
-const VariantSchema = new Schema({
-  type: {
-    type: String,
-    required: [true, 'Variant type is required'],
+const VariantSchema = new Schema(
+  {
+    type: {
+      type: String,
+      required: [true, 'Variant type is required'],
+    },
+    value: {
+      type: String,
+      required: [true, 'Variant value is required'],
+    },
   },
-  value: {
-    type: String,
-    required: [true, 'Variant value is required'],
-  },
-});
+  { _id: false },
+);
 
 // Define the Inventory schema with custom error messages
-const InventorySchema = new Schema({
-  quantity: {
-    type: Number,
-    required: [true, 'Inventory quantity is required'],
+const InventorySchema = new Schema(
+  {
+    quantity: {
+      type: Number,
+      required: [true, 'Inventory quantity is required'],
+    },
+    inStock: {
+      type: Boolean,
+      required: [true, 'Inventory inStock status is required'],
+    },
   },
-  inStock: {
-    type: Boolean,
-    required: [true, 'Inventory inStock status is required'],
-  },
-});
+  { _id: false },
+);
 
 //define product schema
 const productSchema = new Schema<TProduct>({
@@ -57,7 +64,25 @@ const productSchema = new Schema<TProduct>({
   },
 });
 
-// Create the Product model
-const Product = model<TProduct>('Product', productSchema);
+//pre middleware
+productSchema.pre('save', async function (next) {
+  try {
+    const product = this;
+    const existingProduct = await Product.findOne({
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      inventory: product.inventory,
+    });
+    console.log(existingProduct);
+    if (existingProduct) {
+      throw new Error('Product already exists');
+    }
+    next(); // Continue with the save if no error
+  } catch (err: any) {
+    next(err); // Pass any unexpected errors to the next middleware
+  }
+});
 
-module.exports = Product;
+// Create the Product model
+export const Product = model<TProduct>('Product', productSchema);
