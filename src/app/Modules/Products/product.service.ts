@@ -11,8 +11,10 @@ const addProductIntoDB = async (productData: TProduct) => {
   }
 };
 
-const getAllProduct = async () => {
+const getAllProduct = async (query: any) => {
   try {
+    console.log(query);
+
     const result = await Product.find();
     return result;
   } catch (err: any) {
@@ -48,7 +50,7 @@ const updateProduct = async (
 const deleteProduct = async (productId: string) => {
   try {
     const filter = { _id: productId };
-    const result = await Product.updateOne(filter, { isDeleted: true });
+    const result = await Product.deleteOne(filter);
     return result;
   } catch (err: any) {
     console.log(err, 's');

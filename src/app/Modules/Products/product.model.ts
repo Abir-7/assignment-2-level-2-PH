@@ -111,15 +111,6 @@ productSchema.pre('findOne', function (next) {
     throw new Error('Something is wrong');
   }
 });
-// prevent update of a deleted data
-productSchema.pre('findOneAndUpdate', function (next) {
-  try {
-    this.find({ isDeleted: { $ne: true } });
-    next();
-  } catch (error: any) {
-    next(new Error(error));
-  }
-});
 
 // Create the Product model
 export const Product = model<TProduct>('Product', productSchema);

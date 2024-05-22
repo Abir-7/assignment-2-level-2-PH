@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { ProductService } from './product.service';
 import { ProductZodSchema } from './product.validation';
-import { ZodError } from 'zod';
+import { number, string, ZodError } from 'zod';
 
 const createNewProduct = async (req: Request, res: Response) => {
   try {
@@ -40,7 +40,8 @@ const createNewProduct = async (req: Request, res: Response) => {
 
 const getAllProduct = async (req: Request, res: Response) => {
   try {
-    const result = await ProductService.getAllProduct();
+    const query = req.query.searchTerm;
+    const result = await ProductService.getAllProduct(query);
     res.status(200).send({
       success: true,
       message: 'Products fetched successfully!',
@@ -78,15 +79,6 @@ const updateProduct = async (req: Request, res: Response) => {
     const updatedData = req.body;
 
     const result = await ProductService.updateProduct(id, updatedData);
-    console.log(result, 'gg');
-
-    if (!result) {
-      return res.status(500).send({
-        success: false,
-        message: 'Can not Update. Product maybe deleted',
-        error: {},
-      });
-    }
 
     res.status(200).send({
       success: true,
