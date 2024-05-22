@@ -38,6 +38,30 @@ const createNewProduct = async (req: Request, res: Response) => {
   }
 };
 
+const getAllProduct = async (req: Request, res: Response) => {
+  try {
+    const result = await ProductService.getAllProduct();
+    res.status(200).send({
+      success: true,
+      message: 'Products fetched successfully!',
+      data: result,
+    });
+  } catch (error: any) {}
+};
+const getSingleProduct = async (req: Request, res: Response) => {
+  try {
+    const id: string = req.params.productId;
+    const result = await ProductService.getSingleProduct(id);
+    res.status(200).send({
+      success: true,
+      message: 'Product fetched successfully!',
+      data: result,
+    });
+  } catch (error: any) {}
+};
+
 export const ProductController = {
   createNewProduct,
+  getAllProduct,
+  getSingleProduct,
 };
