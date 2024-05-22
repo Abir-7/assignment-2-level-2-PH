@@ -5,7 +5,7 @@ import { ZodError } from 'zod';
 
 const createNewProduct = async (req: Request, res: Response) => {
   try {
-    const { productData } = req.body;
+    const productData = req.body;
     const zodParsedData = ProductZodSchema.parse(productData);
     const result = await ProductService.addProductIntoDB(zodParsedData);
     res.status(200).send({
