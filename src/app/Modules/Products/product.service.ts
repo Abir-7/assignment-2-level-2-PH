@@ -13,7 +13,6 @@ const addProductIntoDB = async (productData: TProduct) => {
 
 const getAllProduct = async (query: any) => {
   try {
-    console.log(query);
     if (query) {
       const result = await Product.find({
         name: { $regex: new RegExp(query, 'i') },
@@ -58,7 +57,6 @@ const deleteProduct = async (productId: string) => {
     const result = await Product.deleteOne(filter);
     return result;
   } catch (err: any) {
-    console.log(err, 's');
     throw err;
   }
 };

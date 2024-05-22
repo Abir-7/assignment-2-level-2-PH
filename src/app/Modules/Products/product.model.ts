@@ -1,6 +1,5 @@
 import { Schema, model } from 'mongoose';
 import { TProduct } from './products.interface';
-import { ProductZodSchema } from './product.validation';
 
 // Define the Variant schema
 const VariantSchema = new Schema(
@@ -88,7 +87,6 @@ productSchema.pre('save', async function (next) {
       price: product.price,
       inventory: product.inventory,
     });
-    console.log(existingProduct);
     if (existingProduct) {
       throw new Error('Product already exists');
     }

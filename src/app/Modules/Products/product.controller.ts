@@ -1,21 +1,19 @@
 import { Request, Response } from 'express';
 import { ProductService } from './product.service';
 import { ProductZodSchema } from './product.validation';
-import { number, string, ZodError } from 'zod';
+import { ZodError } from 'zod';
 
 const createNewProduct = async (req: Request, res: Response) => {
   try {
     const { productData } = req.body;
     const zodParsedData = ProductZodSchema.parse(productData);
     const result = await ProductService.addProductIntoDB(zodParsedData);
-    console.log(result);
     res.status(200).send({
       success: true,
       message: 'Product created successfully',
       data: result,
     });
   } catch (error: any) {
-    console.log(error);
     if (error instanceof ZodError) {
       // Concatenate error messages into a single string
       let errorString = error.errors.map((err) => err.message).join('. ');

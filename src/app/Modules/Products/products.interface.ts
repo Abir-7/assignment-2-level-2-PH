@@ -1,5 +1,3 @@
-import { z } from 'zod';
-
 export interface TVariant {
   type: string;
   value: string;

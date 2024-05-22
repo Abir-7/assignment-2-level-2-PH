@@ -11,7 +11,7 @@ const createOrders = async (order: TOrders) => {
     }
 
     if (product.inventory.quantity < order.quantity) {
-      throw new Error('Insufficient inventory');
+      throw new Error('Insufficient quantity available in inventory');
     }
 
     const newInventoryQuantity = Math.max(
@@ -42,6 +42,10 @@ const getOrders = async (email: any) => {
   try {
     if (email) {
       const result = await Orders.find({ email });
+
+      if (result.length === 0) {
+        throw new Error('Order not found');
+      }
       return result;
     }
     const result = await Orders.find();
