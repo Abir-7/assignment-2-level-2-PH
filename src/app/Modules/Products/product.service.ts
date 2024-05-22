@@ -14,7 +14,12 @@ const addProductIntoDB = async (productData: TProduct) => {
 const getAllProduct = async (query: any) => {
   try {
     console.log(query);
-
+    if (query) {
+      const result = await Product.find({
+        name: { $regex: new RegExp(query, 'i') },
+      });
+      return result;
+    }
     const result = await Product.find();
     return result;
   } catch (err: any) {
