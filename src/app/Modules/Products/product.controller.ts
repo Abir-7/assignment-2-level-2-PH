@@ -46,7 +46,13 @@ const getAllProduct = async (req: Request, res: Response) => {
       message: 'Products fetched successfully!',
       data: result,
     });
-  } catch (error: any) {}
+  } catch (error: any) {
+    res.status(500).send({
+      success: false,
+      message: error.message || 'Something is wrong!! Try Again',
+      error: error,
+    });
+  }
 };
 const getSingleProduct = async (req: Request, res: Response) => {
   try {
@@ -57,11 +63,67 @@ const getSingleProduct = async (req: Request, res: Response) => {
       message: 'Product fetched successfully!',
       data: result,
     });
-  } catch (error: any) {}
+  } catch (error: any) {
+    res.status(500).send({
+      success: false,
+      message: error.message || 'Something is wrong!! Try Again',
+      error: error,
+    });
+  }
+};
+
+const updateProduct = async (req: Request, res: Response) => {
+  try {
+    const id: string = req.params.productId;
+    const updatedData = req.body;
+
+    const result = await ProductService.updateProduct(id, updatedData);
+    console.log(result, 'gg');
+
+    if (!result) {
+      return res.status(500).send({
+        success: false,
+        message: 'Can not Update. Product maybe deleted',
+        error: {},
+      });
+    }
+
+    res.status(200).send({
+      success: true,
+      message: 'Product updated successfully!',
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).send({
+      success: false,
+      message: error.message || 'Something is wrong!! Try Again',
+      error: error,
+    });
+  }
+};
+
+const deleteProduct = async (req: Request, res: Response) => {
+  try {
+    const id: string = req.params.productId;
+    const result = await ProductService.deleteProduct(id);
+    res.status(200).send({
+      success: true,
+      message: 'Product deleted successfully!',
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).send({
+      success: false,
+      message: error.message || 'Something is wrong!! Try Again',
+      error: error,
+    });
+  }
 };
 
 export const ProductController = {
   createNewProduct,
   getAllProduct,
   getSingleProduct,
+  updateProduct,
+  deleteProduct,
 };

@@ -56,4 +56,5 @@ export const ProductZodSchema = z.object({
   }),
   variants: z.array(VariantZodSchema),
   inventory: InventoryZodSchema,
+  isDeleted: z.boolean().optional(),
 });

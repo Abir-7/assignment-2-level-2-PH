@@ -1,4 +1,4 @@
-import { Product } from './product.model';
+import { Product, UpdatedProductData } from './product.model';
 
 import { TProduct } from './products.interface';
 
@@ -19,6 +19,7 @@ const getAllProduct = async () => {
     throw err;
   }
 };
+
 const getSingleProduct = async (productId: string) => {
   try {
     const result = await Product.findById(productId);
@@ -28,11 +29,29 @@ const getSingleProduct = async (productId: string) => {
   }
 };
 
-const updateProduct = async (productId: string) => {
+const updateProduct = async (
+  productId: string,
+  updatedData: UpdatedProductData,
+) => {
   try {
-    const result = await Product.findById(productId);
+    const filter = { _id: productId };
+    const result = await Product.findOneAndUpdate(filter, updatedData, {
+      new: true,
+    });
+
     return result;
   } catch (err: any) {
+    throw err;
+  }
+};
+
+const deleteProduct = async (productId: string) => {
+  try {
+    const filter = { _id: productId };
+    const result = await Product.updateOne(filter, { isDeleted: true });
+    return result;
+  } catch (err: any) {
+    console.log(err, 's');
     throw err;
   }
 };
@@ -42,4 +61,5 @@ export const ProductService = {
   getAllProduct,
   getSingleProduct,
   updateProduct,
+  deleteProduct,
 };

@@ -62,7 +62,21 @@ const productSchema = new Schema<TProduct>({
     type: InventorySchema,
     required: [true, 'Product inventory is required'],
   },
+  isDeleted: {
+    type: Boolean,
+  },
 });
+
+//interface for UpdatedData
+export interface UpdatedProductData {
+  name?: string;
+  description?: string;
+  price?: number;
+  category?: string;
+  tags?: string[];
+  variants?: { type: string; value: string }[];
+  inventory?: { quantity: number; inStock: boolean };
+}
 
 //pre middleware
 productSchema.pre('save', async function (next) {
@@ -81,6 +95,29 @@ productSchema.pre('save', async function (next) {
     next(); // Continue with the save if no error
   } catch (err: any) {
     next(err); // Pass any unexpected errors to the next middleware
+  }
+});
+
+productSchema.pre('find', function (next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+
+productSchema.pre('findOne', function (next) {
+  try {
+    this.find({ isDeleted: { $ne: true } });
+    next();
+  } catch (error) {
+    throw new Error('Something is wrong');
+  }
+});
+// prevent update of a deleted data
+productSchema.pre('findOneAndUpdate', function (next) {
+  try {
+    this.find({ isDeleted: { $ne: true } });
+    next();
+  } catch (error: any) {
+    next(new Error(error));
   }
 });
 
